@@ -6,6 +6,9 @@ cd mgdvault
 uv sync --extra dev --extra docs
 ```
 
+`uv sync` also installs the `dev` dependency group (JupyterLab, ipykernel,
+nbconvert) used for the examples notebook.
+
 | Task | Command |
 | --- | --- |
 | Tests | `uv run pytest` |
@@ -14,6 +17,8 @@ uv sync --extra dev --extra docs
 | Lint | `uv run flake8 src tests` |
 | Docs (live) | `uv run mkdocs serve` |
 | Docs (build) | `uv run mkdocs build --strict` |
+| Examples notebook | `uv run jupyter lab examples/` |
+| Re-execute notebook outputs | `uv run jupyter nbconvert --to notebook --execute --inplace examples/mgdvault_tour.ipynb` |
 
 Conventions: Google-style docstrings on every public object, `black`
 formatting at 88 columns, `flake8` with `flake8-docstrings`. Tests never touch

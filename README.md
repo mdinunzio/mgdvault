@@ -63,6 +63,13 @@ The bundled skills teach an agent to check for secrets with `exists`/`list`,
 ask you to add missing ones via `mgdvault set`, and never print values into
 the conversation.
 
+## Examples
+
+[examples/mgdvault_tour.ipynb](examples/mgdvault_tour.ipynb) is an executed
+notebook that goes from the first secret to power-user features (atomic
+`update`, concurrent writers, caching, alternative backends, KeePassXC
+interoperability), all against a throwaway vault with made-up values.
+
 ## Documentation
 
 Full docs (quick start, configuration, backends, CLI, API reference) are in
@@ -71,7 +78,7 @@ Full docs (quick start, configuration, backends, CLI, API reference) are in
 ## Development
 
 ```bash
-uv sync --extra dev --extra docs
+uv sync --extra dev --extra docs   # also installs the JupyterLab dev group
 uv run pytest
 uv run black src tests && uv run flake8 src tests
 ```

@@ -17,6 +17,9 @@ one `Vault` interface. Public API is the module-level functions in
 - Bundled Claude Code skills live in `src/mgdvault/skills/*/SKILL.md`; keep
   them in sync with CLI and API changes.
 - Docs: mkdocs + mkdocstrings, `uv run mkdocs build --strict` must pass.
+- `examples/mgdvault_tour.ipynb` is generated-then-executed; it must run only
+  against a temp-dir vault with fake values and never print the password. After
+  API changes, re-execute it with nbconvert so saved outputs stay current.
 
 ## KeePass backend gotchas
 

@@ -84,3 +84,10 @@ addopts = "-ra --strict-markers"
 markers = [
     "os_keyring: touches the real OS keyring; requires MGDVAULT_RUN_OS_KEYRING=1",
 ]
+
+[dependency-groups]
+dev = [
+    "jupyterlab>=4.2",
+    "ipykernel>=6.29",
+    "nbconvert>=7.16",
+]

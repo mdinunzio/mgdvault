@@ -104,7 +104,13 @@ os_store.get("legacy/token", default=None)
 Every vault class shares the same methods, so code can accept any
 `mgdvault.Vault`.
 
-## 6. Optional: Claude Code skills
+## 6. Worked examples
+
+The repository's `examples/mgdvault_tour.ipynb` is an executed notebook that
+continues from here through atomic `update`, concurrent writers, caching
+behaviour, alternative backends and KeePassXC interoperability.
+
+## 7. Optional: Claude Code skills
 
 ```bash
 uv run mgdvault install-skill            # this project: ./.claude/skills/
