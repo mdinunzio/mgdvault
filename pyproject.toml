@@ -1,7 +1,86 @@
 [project]
 name = "mgdvault"
 version = "0.1.0"
-description = "Add your description here"
+description = "Zero-setup secret storage for Python projects: a KeePass database unlocked by one environment variable, with OS keyring as an alternative backend."
 readme = "README.md"
-requires-python = ">=3.12"
-dependencies = []
+license = "MIT"
+requires-python = ">=3.10"
+authors = [{ name = "Michael DiNunzio", email = "mdinunzio@gmail.com" }]
+keywords = ["secrets", "credentials", "keepass", "keyring", "vault", "dotenv"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Security",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+]
+
+dependencies = [
+    "pykeepass>=4.1",
+    "keyring>=25.0",
+    "platformdirs>=4.2",
+    "click>=8.1",
+    "filelock>=3.13",
+]
+
+[project.urls]
+Homepage = "https://github.com/mdinunzio/mgdvault"
+Repository = "https://github.com/mdinunzio/mgdvault"
+Issues = "https://github.com/mdinunzio/mgdvault/issues"
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.2",
+    "pytest-cov>=5.0",
+    "black>=24.4",
+    "isort>=5.13",
+    "flake8>=7.0",
+    "flake8-docstrings>=1.7",
+    "flake8-pyproject>=1.2",
+    "python-dotenv>=1.0",
+]
+docs = [
+    "mkdocs>=1.6",
+    "mkdocs-material>=9.5",
+    "mkdocstrings[python]>=0.26",
+    # mkdocstrings 1.0.x is incompatible with pymdown-extensions 11+ (Highlight API change)
+    "pymdown-extensions>=10,<11",
+]
+
+[project.scripts]
+mgdvault = "mgdvault.cli:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/mgdvault"]
+
+[tool.black]
+line-length = 88
+target-version = ["py310"]
+
+[tool.isort]
+profile = "black"
+line_length = 88
+known_first_party = ["mgdvault"]
+
+[tool.flake8]
+max-line-length = 88
+extend-ignore = ["E203", "W503"]
+docstring-convention = "google"
+per-file-ignores = ["tests/*:D100,D101,D102,D103,D104,D105,D107", "docs/*:D"]
+exclude = [".venv", "build", "dist", "site"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra --strict-markers"
+markers = [
+    "os_keyring: touches the real OS keyring; requires MGDVAULT_RUN_OS_KEYRING=1",
+]

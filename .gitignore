@@ -8,3 +8,15 @@ wheels/
 
 # Virtual environments
 .venv
+
+# Secrets and local config
+.env
+*.kdbx
+*.kdbx.lock
+*.tmp
+
+# Tooling
+.coverage
+htmlcov/
+site/
+.pytest_cache/
