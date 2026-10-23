@@ -1,7 +1,9 @@
 """Shared fixtures.
 
-The package itself never loads ``.env``; the test suite does, so a repo-local
-``.env`` can point opt-in tests at a real vault.
+The autouse fixture strips every ``MGDVAULT_*`` variable and disables the
+package's automatic ``.env`` loading, so a developer's repo-local ``.env``
+cannot leak into the suite. Tests that exercise ``.env`` discovery opt back
+in explicitly.
 """
 
 from __future__ import annotations
@@ -10,13 +12,6 @@ import os
 from pathlib import Path
 
 import pytest
-
-try:
-    import dotenv
-
-    dotenv.load_dotenv(Path(__file__).resolve().parents[1] / ".env")
-except ImportError:  # pragma: no cover
-    pass
 
 import mgdvault
 from mgdvault import settings
@@ -28,6 +23,7 @@ MGDVAULT_VARS = [
     settings.ENV_KEYFILE,
     settings.ENV_PATH,
     settings.ENV_KEYRING_SERVICE,
+    settings.ENV_DOTENV,
 ]
 
 
@@ -37,6 +33,7 @@ def clean_env(monkeypatch: pytest.MonkeyPatch):
     for name in list(os.environ):
         if name.startswith("MGDVAULT_"):
             monkeypatch.delenv(name, raising=False)
+    monkeypatch.setenv(settings.ENV_DOTENV, "0")
     mgdvault.reset_default_vault()
     yield
     mgdvault.reset_default_vault()

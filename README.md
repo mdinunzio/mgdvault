@@ -29,7 +29,7 @@ uv tool install mgdvault   # just the CLI, globally
 ## Quick start
 
 ```bash
-export MGDVAULT_PASSWORD='a long passphrase'   # or put it in a gitignored .env your app loads
+export MGDVAULT_PASSWORD='a long passphrase'   # or put it in the project's gitignored .env
 uv run mgdvault set myapp/openai/api_key       # hidden prompt; database created automatically
 uv run mgdvault info
 ```
@@ -49,8 +49,11 @@ mgdvault.list_keys("myapp")
 | `MGDVAULT_PATH` | Database location | `~/Library/Application Support/mgdvault/vault.kdbx` (macOS), `%LOCALAPPDATA%\mgdvault\vault.kdbx` (Windows), `~/.local/share/mgdvault/vault.kdbx` (Linux) |
 | `MGDVAULT_BACKEND` | `keepass`, `keyring`, `env`, `memory` | `keepass` |
 | `MGDVAULT_KEYFILE` | Optional KeePass key file | unset |
+| `MGDVAULT_DOTENV` | `.env` to load, or `0` to disable | nearest `.env` above cwd |
 
-mgdvault never loads `.env` files itself; that is the application's call.
+mgdvault loads the nearest `.env` above the working directory when first used
+and in every CLI command, without overriding variables that are already set.
+Cron and systemd jobs should export the password instead.
 
 ## Claude Code skills
 

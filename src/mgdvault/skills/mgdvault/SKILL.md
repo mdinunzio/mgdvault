@@ -44,9 +44,13 @@ Secrets are addressed by slash-separated keys such as `mgdio/google/personal` or
 | `MGDVAULT_BACKEND` | `keepass` (default), `keyring` (OS credential manager), `env`, `memory` | `keepass` |
 | `MGDVAULT_KEYRING_SERVICE` | Service name for the keyring backend | `mgdvault` |
 | `MGDVAULT_LOCK_TIMEOUT` | Seconds to wait for another process's write lock | `30` |
+| `MGDVAULT_DOTENV` | Path of a `.env` to load, or `0` to disable `.env` loading | nearest `.env` above the working directory |
 
-mgdvault does **not** load `.env` files. The application does (for example with
-`python-dotenv`), or the variables are exported in the shell, CI, or container.
+mgdvault loads the nearest `.env` at or above the working directory when the
+default vault is first used and at the start of every CLI command, so
+`uv run mgdvault list` works from a project whose `.env` holds the password.
+Variables already exported in the shell, CI or container are never overridden.
+Cron and systemd jobs have no project directory, so export the password there.
 If a project keeps `MGDVAULT_PASSWORD` in `.env`, make sure `.env` is gitignored.
 
 The database is created automatically on first use, so a fresh machine needs
@@ -117,8 +121,8 @@ one vault, and `mgdvault list <application>` shows everything an app owns.
 ## Typical workflow when a task needs a credential
 
 1. `mgdvault info` to confirm a vault is configured. If it says not configured,
-   ask the user to set `MGDVAULT_PASSWORD` (export, or add to a gitignored
-   `.env` that the app loads).
+   ask the user to set `MGDVAULT_PASSWORD` (export it, or add it to the
+   project's gitignored `.env`, which mgdvault loads automatically).
 2. `mgdvault list <app>` and `mgdvault exists <key>` to see what is present.
 3. For anything missing, give the user the exact `mgdvault set <key>` command
    to run, and say what the value is (for example "your YNAB personal access
@@ -128,8 +132,9 @@ one vault, and `mgdvault list <application>` shows everything an app owns.
 
 ## Troubleshooting
 
-- `MGDVAULT_PASSWORD is not set`: the app did not load its `.env`, or the
-  variable is missing. Check with `mgdvault info` from the same shell.
+- `MGDVAULT_PASSWORD is not set`: no `.env` was found above the working
+  directory and nothing is exported. `mgdvault info` prints which `.env` was
+  loaded (or `none loaded`); run it from the project root.
 - `Could not unlock the KeePass database ... wrong password`: the password does
   not match the existing file. Confirm `MGDVAULT_PATH` points at the intended
   database; a different path with a new password would create a separate vault.

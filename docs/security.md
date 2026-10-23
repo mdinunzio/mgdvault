@@ -30,6 +30,8 @@
   password strong.
 - Prefer exporting `MGDVAULT_PASSWORD` from a shell profile or a secrets
   manager over putting it in per-project `.env` files, so there is one copy.
+  An exported value always wins over a `.env`; mgdvault never overrides
+  variables that are already set.
 - If a value ever appears in a chat transcript, log, or screenshot, rotate it.
 - `MGDVAULT_PATH` makes per-project vaults easy; committing the encrypted file
   is acceptable, committing the password is not.

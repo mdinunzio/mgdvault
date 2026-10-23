@@ -26,6 +26,7 @@ dependencies = [
     "platformdirs>=4.2",
     "click>=8.1",
     "filelock>=3.13",
+    "python-dotenv>=1.0",
 ]
 
 [project.urls]
@@ -42,7 +43,6 @@ dev = [
     "flake8>=7.0",
     "flake8-docstrings>=1.7",
     "flake8-pyproject>=1.2",
-    "python-dotenv>=1.0",
 ]
 docs = [
     "mkdocs>=1.6",

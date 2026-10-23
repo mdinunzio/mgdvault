@@ -2,8 +2,10 @@
 
 Most applications never instantiate a :class:`~mgdvault.base.Vault`. They
 set a couple of environment variables and call :func:`get` / :func:`set`.
-The default vault is built lazily from ``os.environ`` on first use, so the
-application decides if and when a ``.env`` file is loaded.
+The default vault is built lazily from ``os.environ`` on first use. Just
+before that, the nearest ``.env`` above the working directory is loaded
+without overriding variables already set, so ``uv run`` and cron jobs see
+the same configuration as an application that loads ``.env`` itself.
 
 Resolution rules (see :mod:`mgdvault.settings` for the variable names):
 
@@ -26,6 +28,7 @@ from typing import Any, Callable, Mapping
 from mgdvault import settings
 from mgdvault.backends import EnvVault, KeePassVault, KeyringVault, MemoryVault
 from mgdvault.base import MISSING, Vault
+from mgdvault.envfile import load_env_file
 from mgdvault.exceptions import VaultConfigurationError
 
 _default: Vault | None = None
@@ -34,6 +37,9 @@ _default_lock = threading.RLock()
 
 def vault_from_env(environ: Mapping[str, str] | None = None) -> Vault:
     """Build a vault from environment variables without caching it.
+
+    When ``environ`` is omitted, the nearest ``.env`` is loaded first (see
+    :func:`mgdvault.load_env_file`); an explicit mapping is used as-is.
 
     Args:
         environ: Mapping to read; defaults to :data:`os.environ`.
@@ -45,7 +51,11 @@ def vault_from_env(environ: Mapping[str, str] | None = None) -> Vault:
         VaultConfigurationError: If the configuration is incomplete or names
             an unknown backend.
     """
-    env = os.environ if environ is None else environ
+    if environ is None:
+        load_env_file()
+        env: Mapping[str, str] = os.environ
+    else:
+        env = environ
     backend = env.get(settings.ENV_BACKEND, settings.DEFAULT_BACKEND).strip().lower()
 
     if backend == "keepass":
@@ -53,8 +63,9 @@ def vault_from_env(environ: Mapping[str, str] | None = None) -> Vault:
         keyfile = env.get(settings.ENV_KEYFILE) or None
         if not password and not keyfile:
             raise VaultConfigurationError(
-                f"{settings.ENV_PASSWORD} is not set. Export it (or put it in a "
-                ".env file your application loads) to unlock the KeePass vault, "
+                f"{settings.ENV_PASSWORD} is not set. Export it, or put it in a "
+                ".env file in this project (mgdvault loads the nearest .env "
+                "automatically), to unlock the KeePass vault, "
                 f"or set {settings.ENV_BACKEND}=keyring to use the OS credential "
                 "manager instead."
             )

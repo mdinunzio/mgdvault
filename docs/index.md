@@ -30,7 +30,8 @@ backend (`MGDVAULT_BACKEND=keyring`) for people who prefer it.
 
 ## Features
 
-- **Zero setup**: the database is created on first use.
+- **Zero setup**: the database is created on first use, and the project's
+  `.env` is picked up automatically (never overriding exported variables).
 - **Fast**: the unlock cost is paid once per process; reads are cached and
   refreshed only when another process changes the file.
 - **Safe for concurrent jobs**: writes take a file lock and re-read before

@@ -1,9 +1,10 @@
 """Environment variable names and default paths.
 
 Nothing in this module reads the environment at import time. The default
-vault is resolved lazily by :func:`mgdvault.api.default_vault`, using
-whatever is in ``os.environ`` at that moment. mgdvault never loads a
-``.env`` file itself; that decision belongs to the application.
+vault is resolved lazily by :func:`mgdvault.api.default_vault`. At that
+moment, and at the start of every CLI command, the nearest ``.env`` above
+the working directory is loaded without overriding variables that are
+already set (see :mod:`mgdvault.envfile`).
 """
 
 from __future__ import annotations
@@ -33,6 +34,10 @@ ENV_KEYRING_SERVICE = "MGDVAULT_KEYRING_SERVICE"
 
 ENV_SECRET_PREFIX = "MGDVAULT_SECRET_"
 """Prefix of environment variables read by the ``env`` backend."""
+
+ENV_DOTENV = "MGDVAULT_DOTENV"
+"""Path of a ``.env`` file to load, or ``0`` to disable ``.env`` loading.
+Unset means: use the nearest ``.env`` at or above the working directory."""
 
 ENV_LOCK_TIMEOUT = "MGDVAULT_LOCK_TIMEOUT"
 """Seconds to wait for the KeePass write lock before failing (default 30)."""

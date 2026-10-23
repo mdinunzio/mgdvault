@@ -58,8 +58,10 @@ Guidelines:
 
 - Call `mgdvault.get` lazily inside functions, not at import time, so importing
   the package never requires a vault.
-- Do not call `load_dotenv()` from library code. Only the top-level application
-  (or the package's own CLI entry point) decides whether to load a `.env`.
+- Your package does not need to call `load_dotenv()` for mgdvault's sake:
+  mgdvault loads the nearest `.env` above the working directory itself, without
+  overriding exported variables. Your own non-secret settings may still want
+  `python-dotenv`; that is the application's choice.
 - Reads are cached per process after the first unlock; no need to memoise.
 - Use `mgdvault.get_json` / `set_json` for structured payloads such as Google
   OAuth `Credentials.to_json()` output. Store the JSON string, rebuild with
@@ -121,10 +123,10 @@ def fake_vault():
     mgdvault.reset_default_vault()
 ```
 
-For integration tests that need the real vault, let the repo's `.env` be
-loaded by `conftest.py` (`dotenv.load_dotenv()` there is fine because tests are
-an application, not the library). Mark such tests and skip them unless an
-opt-in variable is set.
+For integration tests that need the real vault, running pytest from the repo
+root is enough: mgdvault finds the repo's `.env`. Mark such tests and skip them
+unless an opt-in variable is set. Unit tests should set `MGDVAULT_DOTENV=0`
+(or use `set_default_vault`) so a developer's `.env` cannot leak in.
 
 ## 6. Document it for users
 
@@ -132,8 +134,9 @@ In the README:
 
 - Say the package uses mgdvault and list the keys it reads (`mypkg/ynab/token`,
   `mypkg/google/<profile>`).
-- Tell users to export `MGDVAULT_PASSWORD` (or add it to a gitignored `.env`
-  that the app loads) and that the vault is created automatically.
+- Tell users to export `MGDVAULT_PASSWORD` or add it to the project's
+  gitignored `.env` (loaded automatically), and that the vault is created
+  automatically. Cron/systemd jobs must export it.
 - Mention `MGDVAULT_BACKEND=keyring` for people who prefer the OS credential
   manager, and `MGDVAULT_PATH` for a per-project database.
 - Point to `uv run mgdvault install-skill` so Claude Code sessions in that

@@ -24,10 +24,14 @@ loads:
 export MGDVAULT_PASSWORD='a long passphrase you keep somewhere safe'
 ```
 
-!!! note "mgdvault does not read `.env` files"
-    Loading `.env` is the application's job (for example with
-    [python-dotenv](https://pypi.org/project/python-dotenv/)). mgdvault only
-    looks at `os.environ` at the moment it is first used.
+!!! note "`.env` files are picked up automatically"
+    When the default vault is first used, and at the start of every CLI
+    command, mgdvault loads the nearest `.env` at or above the working
+    directory. Variables already exported are never overridden, so a shell
+    export or a CI secret always wins. This is what makes
+    `uv run mgdvault list` work inside a project. Set `MGDVAULT_DOTENV=0` to
+    turn it off, or point it at a specific file. Cron and systemd jobs have no
+    project directory: export the password there.
 
 That is all the configuration required. The database is created automatically
 at the default location the first time you store something:

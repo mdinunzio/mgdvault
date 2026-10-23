@@ -2048,6 +2048,7 @@ dependencies = [
     { name = "platformdirs", version = "4.12.4", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
     { name = "platformdirs", version = "4.13.5", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
     { name = "pykeepass" },
+    { name = "python-dotenv" },
 ]
 
 [package.optional-dependencies]
@@ -2059,7 +2060,6 @@ dev = [
     { name = "isort" },
     { name = "pytest" },
     { name = "pytest-cov" },
-    { name = "python-dotenv" },
 ]
 docs = [
     { name = "mkdocs" },
@@ -2095,7 +2095,7 @@ requires-dist = [
     { name = "pymdown-extensions", marker = "extra == 'docs'", specifier = ">=10,<11" },
     { name = "pytest", marker = "extra == 'dev'", specifier = ">=8.2" },
     { name = "pytest-cov", marker = "extra == 'dev'", specifier = ">=5.0" },
-    { name = "python-dotenv", marker = "extra == 'dev'", specifier = ">=1.0" },
+    { name = "python-dotenv", specifier = ">=1.0" },
 ]
 provides-extras = ["dev", "docs"]
 

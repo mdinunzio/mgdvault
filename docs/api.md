@@ -18,6 +18,10 @@
         - reset_default_vault
         - vault_from_env
 
+## `.env` loading
+
+::: mgdvault.envfile
+
 ## Vault interface
 
 ::: mgdvault.base.Vault

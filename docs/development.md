@@ -25,8 +25,9 @@ formatting at 88 columns, `flake8` with `flake8-docstrings`. Tests never touch
 the real OS keyring (a fake backend is monkeypatched in) and create KeePass
 databases under `tmp_path`.
 
-The test suite loads a repo-local `.env` if present, so integration-style
-tests can point at a real vault. The package itself never loads `.env`.
+The autouse fixture in `tests/conftest.py` strips `MGDVAULT_*` variables and
+sets `MGDVAULT_DOTENV=0`, so a developer's repo-local `.env` cannot leak into
+the suite; `tests/test_envfile.py` opts back in to exercise discovery.
 
 ## Publishing the docs to GitHub Pages
 

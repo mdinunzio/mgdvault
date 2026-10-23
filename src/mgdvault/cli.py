@@ -15,6 +15,7 @@ import click
 import mgdvault
 from mgdvault import settings
 from mgdvault.backends import KeePassVault
+from mgdvault.envfile import load_env_file
 from mgdvault.exceptions import MgdvaultError
 from mgdvault.skills import install_skills, iter_skill_dirs, read_description
 
@@ -40,16 +41,22 @@ def main() -> None:
 
     The vault is chosen from environment variables: set MGDVAULT_PASSWORD for
     the default KeePass database, or MGDVAULT_BACKEND=keyring for the OS
-    credential manager. Run `mgdvault info` to see what is in effect.
+    credential manager. The nearest .env above the working directory is
+    loaded first without overriding exported variables (MGDVAULT_DOTENV=0
+    disables this). Run `mgdvault info` to see what is in effect.
     """
+    load_env_file()
 
 
 @main.command()
 def info() -> None:
     """Show the active backend and location (never prints secret values)."""
-    backend = settings.ENV_BACKEND
+    import os
+
+    loaded = load_env_file()
+    click.echo(f"dotenv:    {loaded if loaded else 'none loaded'}")
     click.echo(
-        f"backend:   {__import__('os').environ.get(backend, settings.DEFAULT_BACKEND)}"
+        f"backend:   {os.environ.get(settings.ENV_BACKEND, settings.DEFAULT_BACKEND)}"
     )
     try:
         vault = mgdvault.default_vault()

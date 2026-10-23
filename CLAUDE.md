@@ -11,7 +11,11 @@ one `Vault` interface. Public API is the module-level functions in
   `flake8` + `flake8-docstrings` must pass: `uv run black src tests && uv run flake8 src tests`.
 - Tests: `uv run pytest`. Never touch the real OS keyring in tests (use
   `tests/fake_keyring.py`); KeePass databases go under `tmp_path`.
-- The package must not read `.env`; only `tests/conftest.py` does.
+- `.env` loading lives in `src/mgdvault/envfile.py`: nearest `.env` above
+  cwd, `override=False`, triggered lazily by `default_vault()` and the CLI,
+  never at import. `MGDVAULT_DOTENV` points at a file or disables it. Tests
+  set `MGDVAULT_DOTENV=0` in the autouse fixture. (Reversed on 2026-10-23
+  from "never load .env" because `uv run mgdvault` in a repo failed.)
 - Keys are `app/service/name` paths validated in `src/mgdvault/keys.py`.
 - CLI (`src/mgdvault/cli.py`) never accepts secret values as arguments.
 - Bundled Claude Code skills live in `src/mgdvault/skills/*/SKILL.md`; keep
@@ -30,4 +34,4 @@ one `Vault` interface. Public API is the module-level functions in
   only safe read-modify-write; keep that invariant.
 - An earlier, more elaborate design (`git show cac7446:mgd-vault-spec.md`)
   was superseded by the 2026-10-23 conversation: names are `mgdvault` /
-  `MGDVAULT_*`, no dotenv loading, no entry metadata, export/import deferred.
+  `MGDVAULT_*`, no entry metadata, export/import deferred.

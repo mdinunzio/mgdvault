@@ -1,6 +1,8 @@
 """mgdvault: zero-setup secret storage for Python projects.
 
-Set ``MGDVAULT_PASSWORD`` and start calling :func:`get` and :func:`set`.
+Set ``MGDVAULT_PASSWORD`` (exported, or in your project's ``.env``, which is
+loaded automatically without overriding exported variables) and start
+calling :func:`get` and :func:`set`.
 Secrets land in an encrypted KeePass database in your user data directory
 that every application on the machine can share. Switch to the OS keyring
 with ``MGDVAULT_BACKEND=keyring``, or build vaults explicitly with the
@@ -29,6 +31,7 @@ from mgdvault.api import (
 )
 from mgdvault.backends import EnvVault, KeePassVault, KeyringVault, MemoryVault
 from mgdvault.base import MISSING, Vault
+from mgdvault.envfile import find_env_file, load_env_file
 from mgdvault.exceptions import (
     BackendUnavailableError,
     InvalidKeyError,
@@ -58,6 +61,8 @@ __all__ = [
     "set_default_vault",
     "reset_default_vault",
     "vault_from_env",
+    "load_env_file",
+    "find_env_file",
     # classes
     "Vault",
     "KeePassVault",
